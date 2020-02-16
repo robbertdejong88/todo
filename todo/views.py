@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from todoproject.settings import BASE_DIR
 from .models import Task
 from .forms import CreateTaskForm
@@ -78,7 +78,9 @@ def finish_task(request, id):
 	task.finished = True
 	task.save()
 
-	return redirect('todo_index')
+	return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+	# return redirect('todo_index')
 
 def unfinish_task(request, id):
 	task = Task.objects.get(id=id)
@@ -86,11 +88,11 @@ def unfinish_task(request, id):
 	task.finished = False
 	task.save()
 
-	return redirect('todo_done')
+	return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 def delete_task(request, id):
 	task = Task.objects.get(id=id)
 
 	task.delete()
 
-	return redirect('todo_index')
+	return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
