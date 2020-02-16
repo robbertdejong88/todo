@@ -26,6 +26,7 @@ def finished(request):
 
 def late(request):
 	tasks = Task.objects.filter(target_date__lt=datetime.now())
+	tasks = tasks.filter(finished=False)
 
 	qs = {
 		'tasks':tasks
