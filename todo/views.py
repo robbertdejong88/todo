@@ -96,3 +96,5 @@ def delete_task(request, id):
 	task.delete()
 
 	return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+	
