@@ -1,0 +1,21 @@
+{% extends 'todo/base.html'%}
+
+{% block content %}
+
+
+
+<div class="row justify-content-start mt-4">
+<div class="col-md-6">
+  <form method="POST">
+    {% csrf_token %}
+    {{form}}
+    <div class="form-group mt-4">
+      <button class="btn btn-outline-info" type="login">Inloggen</button>
+    </div>
+  </form>
+  
+
+</div>
+</div>
+
+{% endblock%}

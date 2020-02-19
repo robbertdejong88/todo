@@ -3,6 +3,8 @@ from . import views
 
 urlpatterns = [
     path('', views.index, name='todo_index'),
+    path('login/', views.login_view, name='login'),
+    path('logout/', views.logout_view, name='logout'),
     path('taak/<int:id>', views.detail_task, name='todo_detail'),
     path('klaar/', views.finished, name='todo_done'),
     path('laat/', views.late, name='todo_late'),
