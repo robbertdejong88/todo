@@ -24,7 +24,12 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = os.environ['TODO_SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ['TODO_DEBUG']
+if os.environ['TODO_DEBUG'] == 'True':
+    DEBUG = True
+if os.environ['TODO_DEBUG'] == 'False':
+    DEBUG = False
+
+
 
 ALLOWED_HOSTS = ['localhost']
 
