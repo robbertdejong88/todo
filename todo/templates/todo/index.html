@@ -1,6 +1,20 @@
 {% extends 'todo/base.html'%}
 
 {% block content %}
+
+<div class="row justify-content-start mt-3">
+  <div class="col-6 my-col mt-1">
+    <form method='POST' action=#>
+      {% csrf_token %}
+      <select class="form-control transparant" id="make" name='selected_group' onchange="this.form.submit();">
+          {% for group in groups %}
+              <option disabled selected value> -- Selecteer een Groep -- </option>
+              <option value='{{group.id}}'>{{ group.name }}</option>
+          {% endfor %}
+      </select>
+    </form>
+  </div>
+</div>
 <div class="row justify-content-start mt-3">
 <div class="col-md-2 my-col mt-1">
   <a class="my-btn btn btn-warning" href="{% url 'todo_index' %}">OPEN</a>

@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth import authenticate, login, logout
 from todoproject.settings import BASE_DIR
-from .models import Task
+from .models import Task, TaskGroup
 from .forms import CreateTaskForm, LoginForm
 from datetime import datetime
 from django.contrib import messages
@@ -42,8 +42,10 @@ def logout_view(request):
 @login_required
 def index(request):
 	tasks = Task.objects.filter(finished=False).order_by('target_date')
+	groups = TaskGroup.objects.filter(user=request.user).filter(accepted=request.user)
 	qs = {
-		'tasks':tasks
+		'tasks':tasks,
+		'groups':groups
 	}
 
 	return render(request, 'todo/index.html', qs)
