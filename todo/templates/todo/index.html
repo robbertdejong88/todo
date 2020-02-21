@@ -7,8 +7,8 @@
     <form method='POST' action=#>
       {% csrf_token %}
       <select class="form-control transparant" id="make" name='selected_group' onchange="this.form.submit();">
-          {% for group in groups %}
               <option disabled selected value> -- Selecteer een Groep -- </option>
+          {% for group in groups %}
               <option value='{{group.id}}'>{{ group.name }}</option>
           {% endfor %}
       </select>
