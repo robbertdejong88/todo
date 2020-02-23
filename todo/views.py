@@ -41,14 +41,28 @@ def logout_view(request):
 
 @login_required
 def index(request):
-	tasks = Task.objects.filter(finished=False).order_by('target_date')
 	groups = TaskGroup.objects.filter(user=request.user).filter(accepted=request.user)
 	qs = {
-		'tasks':tasks,
 		'groups':groups
 	}
 
 	return render(request, 'todo/index.html', qs)
+
+@login_required
+def tasks(request):
+	taskgroup_id = request.POST['selected_group']
+	taskgroup = TaskGroup.objects.get(id=taskgroup_id)
+
+	tasks = Task.objects.filter(task_group=taskgroup).filter(finished=False)
+
+	qs = {
+		'tasks':tasks,
+		'taskgroup':taskgroup
+	}
+
+	return render(request, 'todo/tasks.html', qs)
+
+
 
 @login_required
 def finished(request):
@@ -71,15 +85,16 @@ def late(request):
 	return render(request, 'todo/late.html', qs)
 
 @login_required
-def create_task(request):
+def create_task(request, id):
 
 	if request.method == 'POST':
-		form = CreateTaskForm(request.POST)
-		print(request.POST.get('target_date'))
+		taskgroup = TaskGroup.objects.get(id=id)
+		task = Task(task_group=taskgroup)
+		form = CreateTaskForm(request.POST, instance=task)
 		if form.is_valid():
 			form.save()
 			messages.success(request, f'Nieuwe taak opgeslagen')
-			return redirect('todo_index')
+			return redirect('todo_tasks', taskgroup.id)
 		else:
 			print(form.errors)
 

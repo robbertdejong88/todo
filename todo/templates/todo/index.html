@@ -4,64 +4,18 @@
 
 <div class="row justify-content-start mt-3">
   <div class="col-6 my-col mt-1">
-    <form method='POST' action=#>
+    <a class="" href="{% url 'logout' %}"><i class="mb-5 fas fa-sign-out-alt">Uitloggen</i></a>
+    <form method='POST' action="{% url 'todo_tasks' %}">
       {% csrf_token %}
-      <select class="form-control transparant" id="make" name='selected_group' onchange="this.form.submit();">
-              <option disabled selected value> -- Selecteer een Groep -- </option>
+      <select class="form-control transparant" id="make" name='selected_group'>
           {% for group in groups %}
               <option value='{{group.id}}'>{{ group.name }}</option>
           {% endfor %}
+          <input class="btn btn-success form-control mt-2" type= "submit" value="Taken">
       </select>
     </form>
   </div>
 </div>
-<div class="row justify-content-start mt-3">
-<div class="col-md-2 my-col mt-1">
-  <a class="my-btn btn btn-warning" href="{% url 'todo_index' %}">OPEN</a>
-</div>
-<div class="col-md-2 my-col mt-1">
-  <a class="my-btn btn btn-success" href="{% url 'todo_done' %}">KLAAR</a>
-</div>
-<div class="col-md-2 my-col mt-1">
-  <a class="my-btn btn btn-danger" href="{% url 'todo_late' %}">TE LAAT</a>
-</div>
-<div class="col-md-6 text-center">
-</div>
-</div>
 
-<div class="row justify-content-center mt-3">
-<div class="col-6 text-center">
-  <a href="{% url 'todo_create' %}"><i class="fas fa-plus fa-2x"></i></a>
-  <a class="ml-2" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i></a>
-</div>
-</div>
-
-
-<div class="row justify-content-start mt-2">
-<div class="col-md-6">
-  <table class="table">
-    <thead>
-      <tr>
-        <th scope="col">Korte omschrijving</th>
-        <th scope="col">Streefdatum</th>
-        <th scope="col">Urgentie</th>
-        <th scope="col"></th>
-        <th scope="col"></th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for task in tasks %}
-        <tr>
-          <td><a href="{% url 'todo_detail' task.id %}" title="">{{task.short_description}}</a></td>
-          <td>{{task.target_date|date:"d-m-Y"}}</td>
-          <td>{{task.priority}}</td>
-          <td><a href="{% url 'todo_finish' task.id%}"><i class="fas fa-check"></i></a></td>
-          <td><a class="confirm-delete" href="{% url 'todo_delete' task.id%}"><i class="far fa-trash-alt"></i></a></td>
-        </tr>
-      {% endfor %} 
-    </tbody>
-  </table>
-</div>
-</div>
 
 {% endblock%}
