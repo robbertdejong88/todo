@@ -7,7 +7,7 @@
 		{% csrf_token %}
 		{{form}}
 		<div class="form-group mt-4">
-			<button class="btn btn-outline-info" type="submit">Aanpassen</button><a class="ml-2" href="{% url 'todo_index' %}"> Cancel</a>
+			<button class="btn btn-outline-info" type="submit">Aanpassen</button><a class="ml-2" href="{% url 'todo_tasks_parameter' taskgroup_id %}"> Cancel</a>
 		</div>
 	</form>
 	

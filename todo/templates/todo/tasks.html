@@ -57,3 +57,13 @@
 </div>
 
 {% endblock%}
+
+
+{%block script%}
+<script>
+  $(document).on('click', '.confirm-delete', function(){
+    return confirm('Weet je zeker dat je deze taak wil verwijderen?');
+  })
+</script>
+
+{% endblock %}

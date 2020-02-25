@@ -49,19 +49,31 @@ def index(request):
 	return render(request, 'todo/index.html', qs)
 
 @login_required
-def tasks(request):
-	taskgroup_id = request.POST['selected_group']
-	taskgroup = TaskGroup.objects.get(id=taskgroup_id)
+def tasks(request, taskgroup_id=None):
+	if taskgroup_id == None:
+		taskgroup_id = request.POST.get('selected_group')
+		taskgroup = TaskGroup.objects.get(id=taskgroup_id)
 
-	tasks = Task.objects.filter(task_group=taskgroup).filter(finished=False)
+		tasks = Task.objects.filter(task_group=taskgroup).filter(finished=False)
 
-	qs = {
-		'tasks':tasks,
-		'taskgroup':taskgroup
-	}
+		qs = {
+			'tasks':tasks,
+			'taskgroup':taskgroup
+		}
 
+		
+	else:
+		taskgroup = TaskGroup.objects.get(id=taskgroup_id)
+
+		tasks = Task.objects.filter(task_group=taskgroup).filter(finished=False)
+
+		qs = {
+			'tasks':tasks,
+			'taskgroup':taskgroup
+		}
+
+	print('##############debug')
 	return render(request, 'todo/tasks.html', qs)
-
 
 
 @login_required
@@ -85,16 +97,16 @@ def late(request):
 	return render(request, 'todo/late.html', qs)
 
 @login_required
-def create_task(request, id):
+def create_task(request, taskgroup_id):
 
 	if request.method == 'POST':
-		taskgroup = TaskGroup.objects.get(id=id)
+		taskgroup = TaskGroup.objects.get(id=taskgroup_id)
 		task = Task(task_group=taskgroup)
 		form = CreateTaskForm(request.POST, instance=task)
 		if form.is_valid():
 			form.save()
 			messages.success(request, f'Nieuwe taak opgeslagen')
-			return redirect('todo_tasks', taskgroup.id)
+			return redirect('todo_tasks_parameter', taskgroup.id)
 		else:
 			print(form.errors)
 
@@ -103,6 +115,7 @@ def create_task(request, id):
 
 	qs = {
 		'form':form,
+		'taskgroup_id': taskgroup_id,
 	}
 	return render(request, 'todo/create.html', qs)
 
@@ -121,6 +134,7 @@ def detail_task(request, id):
 
 	qs = {
 		'form':form,
+		'taskgroup_id': task.task_group.id,
 	}
 
 	return render(request, 'todo/detail.html', qs)
@@ -133,9 +147,8 @@ def finish_task(request, id):
 	task.save()
 
 	messages.success(request, f'"{task}" gereed gemeld')
-	return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+	return redirect('todo_tasks_parameter', task.task_group.id)
 
-	# return redirect('todo_index')
 
 @login_required
 def unfinish_task(request, id):
@@ -153,4 +166,4 @@ def delete_task(request, id):
 
 	task.delete()
 	messages.success(request, f'"{task}" verwijderd')
-	return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+	return redirect('todo_tasks_parameter', task.task_group.id)

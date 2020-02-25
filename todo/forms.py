@@ -22,7 +22,7 @@ class CreateTaskForm(ModelForm):
 		model = Task
 		fields = ['short_description', 'description', 'target_date', 'priority']
 		widgets = {
-			'short_description': TextInput(attrs={'class':'form-control transparant'}),
+			'short_description': TextInput(attrs={'class':'form-control transparant', 'autofocus':'autofocus'}),
 			'description': Textarea(attrs={'class':'form-control transparant'}),
 			'target_date': DateInput(format=('%Y-%m-%d') ,attrs={'class':'datepicker form-control transparant'}),
 			'priority': Select(attrs={'class':'form-control transparant'})

@@ -7,11 +7,11 @@
     <a class="" href="{% url 'logout' %}"><i class="mb-5 fas fa-sign-out-alt">Uitloggen</i></a>
     <form method='POST' action="{% url 'todo_tasks' %}">
       {% csrf_token %}
-      <select class="form-control transparant" id="make" name='selected_group'>
+      <select class="form-control transparant" id="make" name='selected_group' onChange="form.submit();">
+              <option value="" disabled selected>Selecteer Groep</option>
           {% for group in groups %}
               <option value='{{group.id}}'>{{ group.name }}</option>
           {% endfor %}
-          <input class="btn btn-success form-control mt-2" type= "submit" value="Taken">
       </select>
     </form>
   </div>
