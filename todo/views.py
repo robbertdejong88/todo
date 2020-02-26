@@ -52,27 +52,35 @@ def index(request):
 def tasks(request, taskgroup_id=None):
 	if taskgroup_id == None:
 		taskgroup_id = request.POST.get('selected_group')
-		taskgroup = TaskGroup.objects.get(id=taskgroup_id)
+		if permitted_user(request.user, taskgroup_id):
+			taskgroup = TaskGroup.objects.get(id=taskgroup_id)
 
-		tasks = Task.objects.filter(task_group=taskgroup).filter(finished=False)
+			tasks = Task.objects.filter(task_group=taskgroup).filter(finished=False)
 
-		qs = {
-			'tasks':tasks,
-			'taskgroup':taskgroup
-		}
+			qs = {
+				'tasks':tasks,
+				'taskgroup':taskgroup
+			}
+		else:
+			return HttpResponse('Je zit niet in deze groep')
 
 		
 	else:
-		taskgroup = TaskGroup.objects.get(id=taskgroup_id)
 
-		tasks = Task.objects.filter(task_group=taskgroup).filter(finished=False)
+		if permitted_user(request.user, taskgroup_id):
 
-		qs = {
-			'tasks':tasks,
-			'taskgroup':taskgroup
-		}
+			taskgroup = TaskGroup.objects.get(id=taskgroup_id)
 
-	print('##############debug')
+			tasks = Task.objects.filter(task_group=taskgroup).filter(finished=False)
+
+			qs = {
+				'tasks':tasks,
+				'taskgroup':taskgroup
+			}
+
+		else:
+			return HttpResponse('Je zit niet in deze groep')
+
 	return render(request, 'todo/tasks.html', qs)
 
 
@@ -98,50 +106,60 @@ def late(request):
 
 @login_required
 def create_task(request, taskgroup_id):
+	if permitted_user(request.user, taskgroup_id):
 
-	if request.method == 'POST':
-		taskgroup = TaskGroup.objects.get(id=taskgroup_id)
-		task = Task(task_group=taskgroup)
-		form = CreateTaskForm(request.POST, instance=task)
-		if form.is_valid():
-			form.save()
-			messages.success(request, f'Nieuwe taak opgeslagen')
-			return redirect('todo_tasks_parameter', taskgroup.id)
-		else:
-			print(form.errors)
+		if request.method == 'POST':
+			taskgroup = TaskGroup.objects.get(id=taskgroup_id)
+			task = Task(task_group=taskgroup)
+			form = CreateTaskForm(request.POST, instance=task)
+			if form.is_valid():
+				form.save()
+				messages.success(request, f'Nieuwe taak opgeslagen')
+				return redirect('todo_tasks_parameter', taskgroup.id)
+			else:
+				print(form.errors)
 
 
-	form = CreateTaskForm()
+		form = CreateTaskForm()
 
-	qs = {
-		'form':form,
-		'taskgroup_id': taskgroup_id,
-	}
-	return render(request, 'todo/create.html', qs)
+		qs = {
+			'form':form,
+			'taskgroup_id': taskgroup_id,
+		}
+		return render(request, 'todo/create.html', qs)
 
+	else:
+		return HttpResponse('Je zit niet in deze groep')
 @login_required
 def detail_task(request, id):
 	task = Task.objects.get(id=id)
 
+	taskgroup_id = task.task_group.id
 
-	if request.method == 'POST':
-		form = CreateTaskForm(request.POST, instance=task)
-		form.save()
-		messages.success(request, f'{task} aangepast')
-		return redirect('todo_index')
+	if permitted_user(request.user, taskgroup_id):
+		print('permitted')
+		if request.method == 'POST':
+			form = CreateTaskForm(request.POST, instance=task)
+			form.save()
+			messages.success(request, f'{task} aangepast')
+			return redirect('todo_index')
 
-	form = CreateTaskForm(instance=task)
+		form = CreateTaskForm(instance=task)
 
-	qs = {
-		'form':form,
-		'taskgroup_id': task.task_group.id,
-	}
+		qs = {
+			'form':form,
+			'taskgroup_id': task.task_group.id,
+		}
 
-	return render(request, 'todo/detail.html', qs)
+		return render(request, 'todo/detail.html', qs)
+	else:
+		print('not permitted')
+		return HttpResponse('Je zit niet in deze groep')
 
 @login_required
 def finish_task(request, id):
 	task = Task.objects.get(id=id)
+	
 
 	task.finished = True
 	task.save()
@@ -167,3 +185,12 @@ def delete_task(request, id):
 	task.delete()
 	messages.success(request, f'"{task}" verwijderd')
 	return redirect('todo_tasks_parameter', task.task_group.id)
+
+
+
+def permitted_user(user, task_group_id):
+	taskgroup = TaskGroup.objects.get(id=task_group_id)
+	if user in taskgroup.user.all():
+		return True
+	else:
+		return False
