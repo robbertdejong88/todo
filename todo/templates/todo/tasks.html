@@ -7,24 +7,21 @@
     <a class="" href="{% url 'todo_index' %}">Terug naar groepen</a>
   </div>
 </div>
-<div class="row justify-content-start mt-3">
-<div class="col-md-2 my-col mt-1">
-  <a class="my-btn btn btn-warning" href="{% url 'todo_index' %}">OPEN</a>
-</div>
-<div class="col-md-2 my-col mt-1">
-  <a class="my-btn btn btn-success" href="{% url 'todo_done' %}">KLAAR</a>
-</div>
-<div class="col-md-2 my-col mt-1">
-  <a class="my-btn btn btn-danger" href="{% url 'todo_late' %}">TE LAAT</a>
-</div>
-<div class="col-md-6 text-center">
-</div>
-</div>
+
 
 <div class="row justify-content-center mt-3">
 <div class="col-6 text-center">
-  <a href="{% url 'todo_create' taskgroup.id %}"><i class="fas fa-plus fa-2x"></i></a>
-  <a class="ml-2" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i></a>
+  <div class="dropdown">
+  <button class="btn btn-success dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    menu
+  </button>
+  <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
+    <a class="ml-2 dropdown-item" href="{% url 'todo_create' taskgroup.id %}"><i class="fas fa-plus"> Taak toevoegen</i></a>
+    <a class="ml-2 dropdown-item" href="#"><i class="fas fa-user-plus"> Deelnemer toevoegen</i></a>
+    <div class="dropdown-divider"></div>
+    <a class="ml-2 dropdown-item" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"> Uitloggen</i></a>
+  </div>
+</div>
 </div>
 </div>
 

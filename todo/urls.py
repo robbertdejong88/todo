@@ -11,6 +11,7 @@ urlpatterns = [
     path('klaar/', views.finished, name='todo_done'),
     path('laat/', views.late, name='todo_late'),
     path('nieuw/<int:taskgroup_id>', views.create_task, name='todo_create'),
+    path('nieuwe-groep/', views.create_taskgroup, name='todo_new_task_group'),
     path('finish/<int:id>', views.finish_task, name='todo_finish'),
     path('unfinish/<int:id>', views.unfinish_task, name='todo_unfinish'),
     path('delete/<int:id>', views.delete_task, name='todo_delete'),

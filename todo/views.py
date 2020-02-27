@@ -4,7 +4,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth import authenticate, login, logout
 from todoproject.settings import BASE_DIR
 from .models import Task, TaskGroup
-from .forms import CreateTaskForm, LoginForm
+from .forms import CreateTaskForm, LoginForm, CreateTaskGroupForm
 from datetime import datetime
 from django.contrib import messages
 
@@ -130,6 +130,8 @@ def create_task(request, taskgroup_id):
 
 	else:
 		return HttpResponse('Je zit niet in deze groep')
+
+
 @login_required
 def detail_task(request, id):
 	task = Task.objects.get(id=id)
@@ -159,34 +161,74 @@ def detail_task(request, id):
 @login_required
 def finish_task(request, id):
 	task = Task.objects.get(id=id)
+
+	taskgroup_id = task.task_group.id
 	
+	if permitted_user(request.user, taskgroup_id):
+		task.finished = True
+		task.save()
 
-	task.finished = True
-	task.save()
+		messages.success(request, f'"{task}" gereed gemeld')
+		return redirect('todo_tasks_parameter', task.task_group.id)
 
-	messages.success(request, f'"{task}" gereed gemeld')
-	return redirect('todo_tasks_parameter', task.task_group.id)
+	else:
+		return HttpResponse('Je zit niet in deze groep')
 
 
 @login_required
 def unfinish_task(request, id):
 	task = Task.objects.get(id=id)
 
-	task.finished = False
-	task.save()
+	taskgroup_id = task.task_group.id
+	
+	if permitted_user(request.user, taskgroup_id):
 
-	messages.success(request, f'"{task}" heropend')
-	return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+		task.finished = False
+		task.save()
+
+		messages.success(request, f'"{task}" heropend')
+		return redirect('todo_tasks_parameter', task.task_group.id)
+
+	else:
+		return HttpResponse('Je zit niet in deze groep')
 
 @login_required
 def delete_task(request, id):
 	task = Task.objects.get(id=id)
 
-	task.delete()
-	messages.success(request, f'"{task}" verwijderd')
-	return redirect('todo_tasks_parameter', task.task_group.id)
+	taskgroup_id = task.task_group.id
+	
+	if permitted_user(request.user, taskgroup_id):
+		task.delete()
+		messages.success(request, f'"{task}" verwijderd')
+		return redirect('todo_tasks_parameter', task.task_group.id)
+	else:
+		return HttpResponse('Je zit niet in deze groep')
 
 
+@login_required
+def create_taskgroup(request):
+
+	if request.method == 'POST':
+		group = TaskGroup(owner=request.user)
+		form = CreateTaskGroupForm(request.POST, instance=group)
+		if form.is_valid():
+			form.save()
+			group.user.add(request.user)
+			group.accepted.add(request.user)
+			return redirect('todo_tasks_parameter', group.id)
+		else:
+			print(form.errors)
+
+	else:
+		form = CreateTaskGroupForm()
+
+	
+	qs = {
+		'form':form,
+
+		}	
+	return render(request, 'todo/createtaskgroup.html', qs)
 
 def permitted_user(user, task_group_id):
 	taskgroup = TaskGroup.objects.get(id=task_group_id)

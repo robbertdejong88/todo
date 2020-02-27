@@ -1,7 +1,7 @@
 from django.forms import ModelForm, TextInput, Textarea, DateInput, Select, PasswordInput
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import AuthenticationForm
-from .models import Task
+from .models import Task, TaskGroup
 
 
 
@@ -33,4 +33,16 @@ class CreateTaskForm(ModelForm):
 			'description': 'Omschrijving',
 			'target_date': 'Streef Datum',
 			'priority': 'Prioriteit'
+		}
+
+
+class CreateTaskGroupForm(ModelForm):
+	class Meta:
+		model = TaskGroup
+		fields= ['name']
+		widgets = {
+			'name': TextInput(attrs={'class': 'form-control transparant', 'autofocus':'autofocus'})
+		}
+		labels = {
+			'name':'Groeps naam',
 		}
