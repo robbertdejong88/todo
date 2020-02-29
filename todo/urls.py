@@ -15,4 +15,6 @@ urlpatterns = [
     path('finish/<int:id>', views.finish_task, name='todo_finish'),
     path('unfinish/<int:id>', views.unfinish_task, name='todo_unfinish'),
     path('delete/<int:id>', views.delete_task, name='todo_delete'),
+    #AJAX REQUEST LINKS
+    path('taskgroup-exist', views.validate_taskgroup_name, name='todo_ajax_taskgroup_exist')
 ]

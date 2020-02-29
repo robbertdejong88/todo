@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.contrib.auth import authenticate, login, logout
 from todoproject.settings import BASE_DIR
 from .models import Task, TaskGroup
@@ -236,3 +236,21 @@ def permitted_user(user, task_group_id):
 		return True
 	else:
 		return False
+
+
+
+
+
+
+
+
+# AJAX REQUESTS:
+
+def validate_taskgroup_name(request):
+	taskgroup_name = request.GET.get('taskgroup_name')
+
+	data = {
+		'is_taken': TaskGroup.objects.filter(name__iexact=taskgroup_name).exists()
+	}
+
+	return JsonResponse(data)

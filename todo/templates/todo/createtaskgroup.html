@@ -3,6 +3,7 @@
 {% block content %}
 <div class="row justify-content-start mt-4">
 <div class="col-md-6">
+	<div id="id_taskgroup_exist"></div>
 	<form method="POST">
 		{% csrf_token %}
 		{{form}}
@@ -17,3 +18,33 @@
 
 {% endblock %}
 
+{% block script%}
+
+  <script>
+
+
+
+    $("#id_name").keyup(function () {
+      var taskgroup_name = $(this).val();
+
+      $.ajax({
+        url: "{% url 'todo_ajax_taskgroup_exist' %}",
+        data: {
+          'taskgroup_name': taskgroup_name
+        },
+        dataType: 'json',
+        success: function (data) {
+          if (data.is_taken) {
+            // alert("Groepsnaam bestaat al");
+            document.getElementById('id_taskgroup_exist').innerHTML = ("<div class='alert alert-danger' role='alert'>Groep Bestaat al</div>");
+          }
+          else {
+          	document.getElementById('id_taskgroup_exist').innerHTML = ('');
+          }
+        }
+      });
+
+    });
+  </script>
+
+{% endblock %}
