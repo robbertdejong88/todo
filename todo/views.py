@@ -62,9 +62,9 @@ def tasks(request, taskgroup_id=None):
 
 		if permitted_user(request.user, taskgroup_id):
 
-			taskgroup = TaskGroup.objects.get(id=taskgroup_id).order_by('-target_date')
+			taskgroup = TaskGroup.objects.get(id=taskgroup_id)
 
-			tasks = Task.objects.filter(task_group=taskgroup).filter(finished=False)
+			tasks = Task.objects.filter(task_group=taskgroup).filter(finished=False).order_by('-target_date')
 
 			qs = {
 				'tasks':tasks,
