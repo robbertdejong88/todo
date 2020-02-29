@@ -1,4 +1,4 @@
-from django.forms import ModelForm, TextInput, Textarea, DateInput, Select, PasswordInput
+from django.forms import ModelForm, Form, TextInput, Textarea, DateInput, Select, PasswordInput
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import AuthenticationForm
 from .models import Task, TaskGroup
@@ -45,4 +45,17 @@ class CreateTaskGroupForm(ModelForm):
 		}
 		labels = {
 			'name':'Groeps naam',
+		}
+
+
+
+class AddUserTaskGroupForm(ModelForm):
+	class Meta:
+		model = TaskGroup
+		fields = ['user']
+		widgets = {
+			'user': TextInput(attrs={'class': 'form-control transparant', 'autofocus':'autofocus'})
+		}
+		labels = {
+			'user': 'Gebruikersnaam'
 		}

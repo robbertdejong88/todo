@@ -22,9 +22,7 @@
 
   <script>
 
-
-
-    $("#id_name").keyup(function () {
+   	$("#id_name").keyup(function () {
       var taskgroup_name = $(this).val();
 
       $.ajax({
@@ -43,8 +41,9 @@
           }
         }
       });
-
     });
+
+    
   </script>
 
 {% endblock %}

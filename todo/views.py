@@ -1,10 +1,12 @@
 from django.shortcuts import render, redirect
+from django.contrib.auth.models import User
+from django.core import serializers
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.contrib.auth import authenticate, login, logout
 from todoproject.settings import BASE_DIR
 from .models import Task, TaskGroup
-from .forms import CreateTaskForm, LoginForm, CreateTaskGroupForm
+from .forms import CreateTaskForm, LoginForm, CreateTaskGroupForm, AddUserTaskGroupForm
 from datetime import datetime
 from django.contrib import messages
 
@@ -52,24 +54,15 @@ def index(request):
 def tasks(request, taskgroup_id=None):
 	if taskgroup_id == None:
 		taskgroup_id = request.POST.get('selected_group')
-		if permitted_user(request.user, taskgroup_id):
-			taskgroup = TaskGroup.objects.get(id=taskgroup_id)
-
-			tasks = Task.objects.filter(task_group=taskgroup).filter(finished=False)
-
-			qs = {
-				'tasks':tasks,
-				'taskgroup':taskgroup
-			}
-		else:
-			return HttpResponse('Je zit niet in deze groep')
+		
+		return redirect('todo_tasks_parameter', taskgroup_id)
 
 		
 	else:
 
 		if permitted_user(request.user, taskgroup_id):
 
-			taskgroup = TaskGroup.objects.get(id=taskgroup_id)
+			taskgroup = TaskGroup.objects.get(id=taskgroup_id).order_by('-target_date')
 
 			tasks = Task.objects.filter(task_group=taskgroup).filter(finished=False)
 
@@ -230,6 +223,32 @@ def create_taskgroup(request):
 		}	
 	return render(request, 'todo/createtaskgroup.html', qs)
 
+
+@login_required
+def add_user_taskgroup(request, taskgroup_id):
+
+	if perimitted_owner(request.user, taskgroup_id):
+		form = AddUserTaskGroupForm()
+
+
+
+	else:
+		return HttpResponse('Je bent geen eigenaar van deze groep')
+
+	qs = {
+		'form': form,
+		'taskgroup_id': taskgroup_id,
+	}
+
+
+	
+	return render(request, 'todo/addusertaskgroup.html', qs)
+
+
+
+
+
+# Permitted tests
 def permitted_user(user, task_group_id):
 	taskgroup = TaskGroup.objects.get(id=task_group_id)
 	if user in taskgroup.user.all():
@@ -240,17 +259,32 @@ def permitted_user(user, task_group_id):
 
 
 
+def perimitted_owner(user, taskgroup_id):
+	taskgroup = TaskGroup.objects.get(id=taskgroup_id)
+
+
+	if taskgroup.owner == user:
+		print(taskgroup.owner)
+		return True
+	else:
+		return False
 
 
 
 
-# AJAX REQUESTS:
 
+# AJAX REQUESTST
 def validate_taskgroup_name(request):
 	taskgroup_name = request.GET.get('taskgroup_name')
-
 	data = {
 		'is_taken': TaskGroup.objects.filter(name__iexact=taskgroup_name).exists()
 	}
-
 	return JsonResponse(data)
+
+@login_required
+def show_users(request):
+	user = request.GET.get('user')
+	users = User.objects.filter(username__icontains=user).order_by('username')
+	data = serializers.serialize('json',users)
+
+	return HttpResponse(data, content_type='application/json')
