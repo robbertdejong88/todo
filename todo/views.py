@@ -3,6 +3,8 @@ from django.contrib.auth.models import User
 from django.core import serializers
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import json
 from django.contrib.auth import authenticate, login, logout
 from todoproject.settings import BASE_DIR
 from .models import Task, TaskGroup
@@ -224,8 +226,24 @@ def create_taskgroup(request):
 	return render(request, 'todo/createtaskgroup.html', qs)
 
 
+@csrf_exempt
 @login_required
 def add_user_taskgroup(request, taskgroup_id):
+
+	if request.method == 'POST':
+		value = request.body.decode("utf-8") #to decode from bytes to string
+		user = User.objects.get(id=value)
+		group = TaskGroup.objects.get(id=taskgroup_id)
+		group.user.add(user)
+		username = user.username
+
+		data = {}
+
+		data['result'] = username + ' uitgenodigd voor ' +group.name
+
+		return HttpResponse(json.dumps(data), content_type="application/json")
+
+
 
 	if perimitted_owner(request.user, taskgroup_id):
 		form = AddUserTaskGroupForm()

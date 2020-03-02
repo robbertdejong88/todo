@@ -17,7 +17,7 @@
   </button>
   <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
     <a class="ml-2 dropdown-item" href="{% url 'todo_create' taskgroup.id %}"><i class="fas fa-plus"> Taak toevoegen</i></a>
-    <a class="ml-2 dropdown-item" href="#"><i class="fas fa-user-plus"> Deelnemer toevoegen</i></a>
+    <a class="ml-2 dropdown-item" href="{% url 'todo_add_user_taskgroup' taskgroup.id %}"><i class="fas fa-user-plus"> Deelnemer toevoegen</i></a>
     <div class="dropdown-divider"></div>
     <a class="ml-2 dropdown-item" href="{% url 'logout'%}"><i class="fas fa-sign-out-alt"> Uitloggen</i></a>
   </div>
