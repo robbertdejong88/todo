@@ -6,6 +6,7 @@ urlpatterns = [
     path('taken/', views.tasks, name='todo_tasks'),
     path('taken/<int:taskgroup_id>', views.tasks, name='todo_tasks_parameter'),
     path('taken/<int:taskgroup_id>/nieuwe-gebruiker', views.add_user_taskgroup, name='todo_add_user_taskgroup'),
+    path('uitnodigingen/', views.invites_user_taskgroup, name='todo_invites_user_taskgroup'),
     path('login/', views.login_view, name='login'),
     path('logout/', views.logout_view, name='logout'),
     path('taak/<int:id>', views.detail_task, name='todo_detail'),

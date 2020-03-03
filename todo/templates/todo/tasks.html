@@ -1,4 +1,5 @@
 {% extends 'todo/base.html'%}
+{% load static %}
 
 {% block content %}
 
@@ -17,7 +18,8 @@
   </button>
   <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
     <a class="ml-2 dropdown-item" href="{% url 'todo_create' taskgroup.id %}"><i class="fas fa-plus"> Taak toevoegen</i></a>
-    <a class="ml-2 dropdown-item" href="{% url 'todo_add_user_taskgroup' taskgroup.id %}"><i class="fas fa-user-plus"> Deelnemer toevoegen</i></a>
+    <a class="ml-2 dropdown-item" href="{% url 'todo_add_user_taskgroup' taskgroup.id %}"><i class="fas fa-user-plus"> Deelnemer toevoegen</i>
+      <a class="ml-2 dropdown-item" href="{%url 'todo_invites_user_taskgroup' %}"><i class="fas fa-list"> Uitnodigingen</i></a>
     <div class="dropdown-divider"></div>
     <a class="ml-2 dropdown-item" href="{% url 'logout'%}"><i class="fas fa-sign-out-alt"> Uitloggen</i></a>
   </div>
@@ -32,9 +34,7 @@
     <thead>
       <tr>
         <th scope="col">Korte omschrijving</th>
-        <th scope="col">Streefdatum</th>
-        <th scope="col">Urgentie</th>
-        <th scope="col"></th>
+        <th scope="col">Streefdatum / Urgentie</th>
         <th scope="col"></th>
       </tr>
     </thead>
@@ -42,10 +42,11 @@
       {% for task in tasks %}
         <tr>
           <td><a href="{% url 'todo_detail' task.id %}" title="">{{task.short_description}}</a></td>
-          <td>{{task.target_date|date:"d-m-Y"}}</td>
-          <td>{{task.priority}}</td>
-          <td><a href="{% url 'todo_finish' task.id%}"><i class="fas fa-check"></i></a></td>
-          <td><a class="confirm-delete" href="{% url 'todo_delete' task.id%}"><i class="far fa-trash-alt"></i></a></td>
+          <td>{{task.target_date|date:"d-m-Y"}} {{task.priority}}</td>
+          <td>
+            <a href="{% url 'todo_finish' task.id%}" class="btn btn-success btn-sm">Afgerond</a>
+            <a id="confirm-delete-task" href="{% url 'todo_delete' task.id%}" class="btn btn-danger btn-sm mt-1">Verwijder</a>
+          </td>
         </tr>
       {% endfor %} 
     </tbody>
@@ -57,10 +58,7 @@
 
 
 {%block script%}
-<script>
-  $(document).on('click', '.confirm-delete', function(){
-    return confirm('Weet je zeker dat je deze taak wil verwijderen?');
-  })
-</script>
+
+<script type="text/javascript" src="{% static 'js/main.js'%}"></script>
 
 {% endblock %}

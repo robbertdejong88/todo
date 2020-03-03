@@ -1,0 +1,54 @@
+{% extends 'todo/base.html'%}
+{% load static %} 
+
+{% block content %}
+
+<div class="row justify-content-start mt-3">
+  <div class="col-6 my-col mt-1">
+    <a class="" href="{% url 'todo_index' %}">Terug naar groepen</a>
+  </div>
+</div>
+
+
+
+
+<div class="row justify-content-start mt-2">
+<div class="col-md-6">
+  <table class="table">
+    {{taskgroup_id}}
+    <tbody>
+      {% for taskgroup in taskgroups %}
+        <tr>
+          <td>{{ taskgroup }}</td>
+          <td>
+            <form method="POST">
+              {%csrf_token%}
+              <input type="hidden" name="taskgroupid" value="{{taskgroup.id}}">
+              <input type="hidden" name="accepted" value="True">
+              <button type="submit" class="btn btn-success">Accepteer</button>
+            </form>
+          </td>
+
+          <td>
+            <form method="POST" onsubmit="return confirm('Do you really want to submit the form?');">
+              {%csrf_token%}
+              <input type="hidden" name="taskgroupid" value="{{taskgroup.id}}">
+              <input type="hidden" name="accepted" value="False">
+              <button type="submit" class="btn btn-danger">Verwijder</button>
+            </form>
+          </td>
+        </tr>
+      {% endfor %} 
+    </tbody>
+  </table>
+</div>
+</div>
+
+{% endblock%}
+
+
+{%block script%}
+
+<script type="text/javascript" src="{% static 'js/main.js'%}"></script>
+
+{% endblock %}

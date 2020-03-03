@@ -13,6 +13,7 @@ from datetime import datetime
 from django.contrib import messages
 
 
+
 def login_view(request):
 	if request.method == 'POST':
 		username = request.POST['username'].lower()
@@ -262,6 +263,29 @@ def add_user_taskgroup(request, taskgroup_id):
 	
 	return render(request, 'todo/addusertaskgroup.html', qs)
 
+@login_required
+def invites_user_taskgroup(request):
+	if request.method == 'POST':
+		taskgroup_id = request.POST.get('taskgroupid')
+		accepted = request.POST.get('accepted')
+		user = request.user
+
+		if accepted == "True":
+			TaskGroup.objects.get(id=taskgroup_id).accepted.add(user)
+		else:
+			TaskGroup.objects.get(id=taskgroup_id).user.remove(user)
+
+	taskgroups = []
+	for taskgroup in TaskGroup.objects.all():
+		if request.user in taskgroup.user.all() and request.user not in taskgroup.accepted.all():
+			taskgroups.append(taskgroup)
+
+
+	qs = {
+		'taskgroups':taskgroups
+	}
+
+	return render(request, 'todo/invitestaskgroup.html', qs)
 
 
 

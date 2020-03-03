@@ -5,7 +5,7 @@
 
 <div class="row justify-content-start mt-4">
 <div class="col-md-6">
-	<a href="#" id="addfriend" class="test" uid='999'>TEST</a>
+	<a href="{% url 'todo_tasks_parameter' taskgroup_id %}">Terug naar taken</a>
   <form method="POST">
     {% csrf_token %}
     {{form}}
